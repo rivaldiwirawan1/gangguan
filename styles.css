@@ -1673,22 +1673,19 @@ tr.checked {
     transform: none;
   }
 
+  /* Nested scroll containers are unreliable on mobile browsers; let the list flow with the page scroll instead */
   .gangguan-menu {
     display: flex;
     flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    touch-action: pan-y;
-    padding-right: 4px;
-    max-height: min(55vh, 340px);
-    transform: translateZ(0);
+    overflow: visible;
+    max-height: none;
+    padding-right: 0;
+    touch-action: auto;
   }
 
   .gangguan-item {
     flex-shrink: 0;
-    touch-action: pan-y;
+    touch-action: manipulation;
   }
 
   .gangguan-item:hover {
