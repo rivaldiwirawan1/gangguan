@@ -1666,11 +1666,33 @@ tr.checked {
     -webkit-backdrop-filter: none;
   }
 
+  /* A retained transform (animation fill-mode) on the parent breaks touch scrolling of nested scrollers on Android/iOS */
+  .layout-shell > .left-sidebar {
+    animation: none;
+    transition: none;
+    transform: none;
+  }
+
   .gangguan-menu {
-    overflow: visible;
-    padding-right: 0;
-    max-height: none;
-    touch-action: auto;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y;
+    padding-right: 4px;
+    max-height: min(55vh, 340px);
+    transform: translateZ(0);
+  }
+
+  .gangguan-item {
+    flex-shrink: 0;
+    touch-action: pan-y;
+  }
+
+  .gangguan-item:hover {
+    transform: none;
   }
 
   .right-sidebar {
