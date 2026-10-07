@@ -514,6 +514,8 @@ header {
   display: grid;
   gap: 8px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   min-height: 0;
   padding-right: 4px;
   max-height: calc((var(--menu-item-height) * var(--menu-visible-items)) + (8px * (var(--menu-visible-items) - 1)));
@@ -1660,8 +1662,12 @@ tr.checked {
   }
 
   .gangguan-menu {
-    overflow-y: visible;
-    padding-right: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    touch-action: pan-y;
+    padding-right: 4px;
+    max-height: min(60vh, calc((var(--menu-item-height) * var(--menu-visible-items)) + (8px * (var(--menu-visible-items) - 1))));
   }
 
   .right-sidebar {
