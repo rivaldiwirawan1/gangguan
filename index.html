@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Checklist penanganan gangguan stasiun untuk pencatatan tindakan, progres, dan dokumentasi operasional.">
+  <meta name="robots" content="index,follow">
+  <meta name="theme-color" content="#0f8b8d">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Checklist Penanganan Gangguan Stasiun Tebing Tinggi">
+  <meta property="og:description" content="Pelacakan langkah penanganan gangguan secara cepat, rapi, dan terdokumentasi.">
+  <meta property="og:image" content="og-image.svg">
+  <meta property="og:locale" content="id_ID">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <title>Checklist Penanganan Gangguan Stasiun Tebing Tinggi</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script defer src="config.js"></script>
+  <script defer src="auth.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@motionone/dom/dist/motion.min.js"></script>
+  <script defer src="user-animations.js"></script>
+  <script defer src="user-nav.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-title">Checklist Penanganan Gangguan Stasiun Tebing Tinggi</div>
+    <div class="header-subtitle">Pelacakan langkah penanganan secara cepat, rapi, dan terdokumentasi.</div>
+    <div class="user-nav" aria-label="User navigation">
+      <details class="user-menu">
+        <summary class="user-menu-trigger">
+          <div class="avatar" aria-hidden="true">--</div>
+          <div class="user-text">
+            <span class="username" id="navUsername">Pengguna</span>
+            <span class="user-meta"><span id="navNipp">-</span> · <span id="navJabatan">-</span></span>
+          </div>
+        </summary>
+        <ul class="user-menu-list">
+          <li><a href="history.html">Riwayat</a></li>
+          <li><a href="#" id="profileLink">Profil</a></li>
+          <li><button class="btn btn-gray" data-auth-logout type="button">Keluar</button></li>
+        </ul>
+      </details>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="layout-shell">
+      <aside class="left-sidebar" aria-label="Menu gangguan">
+        <div class="left-sidebar-title">Daftar Gangguan</div>
+        <div class="left-sidebar-subtitle">Pilih jenis gangguan untuk membuka checklist yang sesuai.</div>
+        <div class="gangguan-menu" id="gangguanMenu"></div>
+      </aside>
+
+      <section class="panel">
+      <div class="sidebar-title" id="activeGangguanTitle">Pelayanan Sinyal</div>
+      <div class="sidebar-subtitle" id="activeGangguanSubtitle">Silahkan memilih Sinyal Mekanik atau Elektrik.</div>
+      <div class="sidebar-menu mode-switch" role="tablist" aria-label="Pilih mode checklist">
+        <button class="sidebar-item active" type="button" data-type="mekanik" onclick="switchChecklistType('mekanik')">
+          <span class="sidebar-item-title">Mekanik</span>
+          <span class="sidebar-item-progress" id="menuProgress-mekanik">0/0</span>
+        </button>
+        <button class="sidebar-item" type="button" data-type="elektrik" onclick="switchChecklistType('elektrik')">
+          <span class="sidebar-item-title">Elektrik</span>
+          <span class="sidebar-item-progress" id="menuProgress-elektrik">0/0</span>
+        </button>
+      </div>
+
+      <div class="meta-grid">
+        <div class="field col-3">
+          <label for="petugas">Nama Petugas</label>
+          <input type="text" id="petugas" placeholder="">
+        </div>
+        <div class="field col-3">
+          <label for="nipp">NIPP</label>
+          <input type="text" id="nipp" placeholder="">
+        </div>
+        <div class="field col-3">
+          <label for="lokasi">Lokasi / Stasiun</label>
+          <input type="text" id="lokasi" placeholder="">
+        </div>
+        <div class="field col-3">
+          <label for="tanggal">Tanggal & Waktu</label>
+          <input type="datetime-local" id="tanggal">
+        </div>
+        <div class="field col-12">
+          <label for="keterangan">Keterangan Tambahan</label>
+          <textarea id="keterangan" placeholder="Tuliskan kronologi singkat, kendala, atau catatan penting."></textarea>
+        </div>
+      </div>
+
+      <div class="mode-info">Persinyalan: <span id="modeLabel">Mekanik</span></div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Checklist Terselesaikan</div>
+          <div class="stat-value" id="doneCount">0 / 0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Persentase Progres</div>
+          <div class="stat-value" id="progressText">0%</div>
+        </div>
+      </div>
+
+      <div class="progress-wrap" aria-hidden="true">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 60px;">No</th>
+              <th>Kegiatan</th>
+              <th style="width: 120px;">Status</th>
+              <th style="width: 120px;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="hint">Tip: data tersimpan lokal otomatis saat kamu mengisi form.</div>
+      </section>
+
+      <aside class="right-sidebar" aria-label="Aksi checklist">
+        <div class="right-sidebar-title">Aksi Checklist</div>
+        <div class="right-sidebar-subtitle">Gunakan tombol berikut untuk reset, melihat riwayat, dan menyelesaikan checklist.</div>
+        <div class="action-menu">
+          <button class="btn btn-red action-btn" onclick="resetChecklist()" type="button">Reset</button>
+          <a class="btn btn-blue action-btn" href="history.html">Riwayat</a>
+        </div>
+
+        <div class="signature-box">
+          <div class="signature-title">Tanda Tangan Digital</div>
+          <div class="signature-subtitle">Masukkan PIN 6 digit untuk membuat tanda tangan QR.</div>
+          <div class="signature-status signature-identity" id="signaturePetugas">Petugas: Belum diisi</div>
+          <input
+            class="signature-input"
+            id="signaturePin"
+            type="password"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            maxlength="6"
+            minlength="6"
+            autocomplete="new-password"
+            placeholder="Contoh: 123456"
+          >
+          <button class="btn btn-blue action-btn" onclick="generateSignatureQr()" type="button">Tandatangani QR</button>
+          <div class="signature-status" id="signatureStatus">Belum ada tanda tangan digital.</div>
+          <div class="signature-qr" id="signatureQr" aria-label="QR tanda tangan digital"></div>
+        </div>
+
+        <button class="btn btn-export action-btn finish-btn" id="btnSelesai" onclick="selesaiChecklist()" type="button" disabled>Selesai</button>
+      </aside>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+  <div class="popup-overlay" id="warningPopup" hidden>
+    <div class="warning-popup" role="dialog" aria-modal="true" aria-labelledby="warningPopupTitle" aria-describedby="warningPopupDesc">
+      <button class="close-btn" type="button" onclick="closeWarningPopup()" aria-label="Tutup">×</button>
+
+      <div class="warning-icon" aria-hidden="true">
+        <div class="warning-symbol"></div>
+      </div>
+
+      <div class="popup-content">
+        <h2 id="warningPopupTitle">Warning!</h2>
+        <p id="warningPopupDesc">Ada tahapan yang belum selesai, apakah ingin dilanjutkan?</p>
+
+        <div class="popup-field">
+          <label for="finishReason">Alasan</label>
+          <textarea id="finishReason" placeholder="Tuliskan alasan untuk melanjutkan"></textarea>
+        </div>
+
+        <div class="button-container">
+          <button class="btn btn-yes" type="button" onclick="continueFinishChecklist()">Ya</button>
+          <button class="btn btn-no" type="button" onclick="closeWarningPopup()">Tidak</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <dialog id="profileDialog" class="profile-dialog" aria-labelledby="profileTitle">
+    <form method="dialog" class="profile-dialog-form" onsubmit="return false;">
+      <div class="profile-head">
+        <h3 id="profileTitle">Profil Petugas</h3>
+        <p class="profile-head-subtitle">Informasi akun aktif dan detail petugas.</p>
+      </div>
+
+      <div class="profile-identity">
+        <div class="avatar" id="profileAvatar">--</div>
+        <div class="profile-identity-main">
+          <div class="profile-row"><strong>Nama:</strong> <span id="profileName">-</span></div>
+          <div class="profile-row"><strong>NIPP:</strong> <span id="profileNipp">-</span></div>
+        </div>
+      </div>
+
+      <div id="profileView" class="profile-section">
+        <div class="profile-row"><strong>Jabatan:</strong> <span id="profileJabatan">-</span></div>
+        <div class="profile-row"><strong>Kedudukan:</strong> <span id="profileKedudukan">-</span></div>
+        <div class="profile-row"><strong>Email:</strong> <span id="profileEmail">-</span></div>
+        <div class="profile-row"><strong>Tanda Tangan:</strong> <span id="profileSignatureStatus">-</span></div>
+      </div>
+
+      <div id="profileEditSection" class="profile-section" style="display:none">
+        <div class="profile-row"><strong>Nama:</strong> <input id="profileNameInput" type="text"></div>
+        <div class="profile-row"><strong>Jabatan:</strong> <input id="profileJabatanInput" type="text"></div>
+        <div class="profile-row"><strong>Kedudukan:</strong> <input id="profileKedudukanInput" type="text"></div>
+        <div class="profile-row"><strong>Email:</strong> <input id="profileEmailInput" type="email"></div>
+        <div class="profile-row"><strong>Avatar URL:</strong> <input id="profileAvatarUrlInput" type="text"></div>
+      </div>
+
+      <div id="profileSaveFeedback" class="profile-feedback" aria-live="polite"></div>
+
+      <div class="actions">
+        <button id="profileEdit" class="icon-btn btn-blue" type="button" aria-label="Edit" title="Edit" data-tip="Edit profil">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" fill="currentColor"/><path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" fill="currentColor"/></svg>
+        </button>
+        <button id="profileSave" class="icon-btn btn-green" type="button" style="display:none" aria-label="Simpan" title="Simpan" data-tip="Simpan perubahan">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 16.2l-3.5-3.5L4 14.2 9 19.2 20 8.2l-1.5-1.5L9 16.2z" fill="currentColor"/></svg>
+        </button>
+        <button id="profileCancel" class="icon-btn btn-gray" type="button" style="display:none" aria-label="Batal" title="Batal" data-tip="Batalkan edit">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.3 5.71L12 12l6.3 6.29-1.41 1.41L10.59 13.41 4.29 19.71 2.88 18.3 9.18 12 2.88 5.71 4.29 4.29 10.59 10.59 16.88 4.29 18.3 5.71z" fill="currentColor"/></svg>
+        </button>
+        <button id="closeProfile" class="icon-btn btn-gray" aria-label="Tutup" title="Tutup" data-tip="Tutup dialog">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18.3 5.71L12 12l6.3 6.29-1.41 1.41L10.59 13.41 4.29 19.71 2.88 18.3 9.18 12 2.88 5.71 4.29 4.29 10.59 10.59 16.88 4.29 18.3 5.71z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="copyright-footer">
+    <p>&copy; 2026-77593-56728</p>
+  </footer>
+</body>
+</html>

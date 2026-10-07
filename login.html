@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f8b8d">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'">
+  <title>Login Checklist Gangguan</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="config.js"></script>
+  <script defer src="auth.js"></script>
+  <script defer src="login.js"></script>
+</head>
+<body>
+  <main class="auth-page" aria-label="Halaman login">
+    <section class="auth-card">
+      <h1 class="auth-title">Masuk Aplikasi Checklist</h1>
+      <p class="auth-subtitle">Masukkan NIPP dan password untuk melanjutkan.</p>
+
+      <div class="auth-switch" role="tablist" aria-label="Menu autentikasi">
+        <button type="button" class="auth-tab is-active" data-auth-tab="login" aria-selected="true">Login</button>
+        <button type="button" class="auth-tab" data-auth-tab="register" aria-selected="false">Daftar</button>
+      </div>
+
+      <form id="loginForm" class="auth-form" novalidate>
+        <div class="field">
+          <label for="loginNipp">NIPP</label>
+          <input id="loginNipp" type="text" inputmode="numeric" autocomplete="username" minlength="5" maxlength="20" placeholder="Contoh: 123456" required>
+          <div class="field-message" id="loginNippError" aria-live="polite"></div>
+        </div>
+
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <div class="input-with-action">
+            <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Masukkan password" required>
+            <button type="button" class="input-toggle" data-toggle-target="loginPassword" aria-label="Tampilkan password">Lihat</button>
+          </div>
+          <div class="field-message" id="loginPasswordError" aria-live="polite"></div>
+        </div>
+
+        <label class="auth-remember" for="rememberMe">
+          <input id="rememberMe" type="checkbox">
+          Ingat saya selama 30 hari
+        </label>
+
+        <div class="auth-inline-actions">
+          <button type="button" id="openForgotPassword" class="auth-link-btn">Lupa password?</button>
+        </div>
+
+        <button id="loginSubmit" type="submit" class="btn btn-blue">Login</button>
+        <div id="loginMessage" class="auth-message" role="status" aria-live="polite"></div>
+      </form>
+
+      <section id="forgotPasswordPanel" class="auth-recovery auth-hidden" aria-label="Pemulihan password">
+        <div class="auth-recovery-head">
+          <h2>Lupa Password</h2>
+          <p>Cari data akun dengan NIPP, lalu atur password baru.</p>
+        </div>
+
+        <div class="field">
+          <label for="forgotNipp">NIPP</label>
+          <input id="forgotNipp" type="text" inputmode="numeric" autocomplete="username" minlength="5" maxlength="20" placeholder="Contoh: 123456" required>
+          <div class="field-message" id="forgotNippError" aria-live="polite"></div>
+        </div>
+
+        <button id="forgotSearchSubmit" type="button" class="btn btn-blue field-full">Cari Akun</button>
+
+        <div id="forgotLookupMessage" class="auth-message field-full" role="status" aria-live="polite"></div>
+
+        <div id="forgotAccountCard" class="auth-recovery-card auth-hidden field-full" aria-live="polite">
+          <div class="auth-recovery-row"><strong>Nama:</strong> <span id="forgotAccountName">-</span></div>
+          <div class="auth-recovery-row"><strong>Jabatan:</strong> <span id="forgotAccountJabatan">-</span></div>
+          <div class="auth-recovery-row"><strong>Kedudukan:</strong> <span id="forgotAccountKedudukan">-</span></div>
+        </div>
+
+        <div id="forgotResetSection" class="auth-hidden field-full">
+          <div class="field">
+            <label for="forgotNewPassword">Password Baru</label>
+            <div class="input-with-action">
+              <input id="forgotNewPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Minimal 6 karakter" required>
+              <button type="button" class="input-toggle" data-toggle-target="forgotNewPassword" aria-label="Tampilkan password baru">Lihat</button>
+            </div>
+            <div class="field-message" id="forgotNewPasswordError" aria-live="polite"></div>
+          </div>
+
+          <div class="field field-full">
+            <label for="forgotNewPasswordConfirm">Konfirmasi Password Baru</label>
+            <div class="input-with-action">
+              <input id="forgotNewPasswordConfirm" type="password" autocomplete="new-password" minlength="6" placeholder="Ulangi password baru" required>
+              <button type="button" class="input-toggle" data-toggle-target="forgotNewPasswordConfirm" aria-label="Tampilkan konfirmasi password baru">Lihat</button>
+            </div>
+            <div class="field-message" id="forgotNewPasswordConfirmError" aria-live="polite"></div>
+          </div>
+
+          <button id="forgotResetSubmit" type="button" class="btn btn-green field-full">Reset Password</button>
+        </div>
+
+        <div class="auth-recovery-footer field-full">
+          <button type="button" id="backToLogin" class="auth-link-btn">Kembali ke login</button>
+        </div>
+      </section>
+
+      <form id="registerForm" class="auth-form auth-form-register auth-hidden" novalidate>
+        <div class="field">
+          <label for="registerNama">Nama Lengkap</label>
+          <input id="registerNama" type="text" autocomplete="name" maxlength="80" placeholder="Contoh: Budi Santoso" required>
+          <div class="field-message" id="registerNamaError" aria-live="polite"></div>
+        </div>
+
+        <div class="field">
+          <label for="registerJabatan">Jabatan</label>
+          <input id="registerJabatan" type="text" autocomplete="organization-title" maxlength="80" placeholder="Contoh: PPKA" required>
+          <div class="field-message" id="registerJabatanError" aria-live="polite"></div>
+        </div>
+
+        <div class="field">
+          <label for="registerKedudukan">Kedudukan Stasiun</label>
+          <input id="registerKedudukan" type="text" maxlength="120" placeholder="Contoh: Stasiun Tebing Tinggi" required>
+          <div class="field-message" id="registerKedudukanError" aria-live="polite"></div>
+        </div>
+
+        <div class="field">
+          <label for="registerNipp">NIPP Baru</label>
+          <input id="registerNipp" type="text" inputmode="numeric" autocomplete="username" minlength="5" maxlength="20" placeholder="Contoh: 123456" required>
+          <div class="field-message" id="registerNippError" aria-live="polite"></div>
+        </div>
+
+        <div class="field">
+          <label for="registerPassword">Password Baru</label>
+          <div class="input-with-action">
+            <input id="registerPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Minimal 6 karakter" required>
+            <button type="button" class="input-toggle" data-toggle-target="registerPassword" aria-label="Tampilkan password baru">Lihat</button>
+          </div>
+          <div class="field-message" id="registerPasswordError" aria-live="polite"></div>
+        </div>
+
+        <div class="field">
+          <label for="registerPin">PIN Tanda Tangan Berkas</label>
+          <div class="input-with-action">
+            <input id="registerPin" type="password" inputmode="numeric" autocomplete="off" minlength="6" maxlength="6" placeholder="6 digit angka" required>
+            <button type="button" class="input-toggle" data-toggle-target="registerPin" aria-label="Tampilkan PIN">Lihat</button>
+          </div>
+          <div class="field-message" id="registerPinError" aria-live="polite"></div>
+        </div>
+
+        <div class="field field-full">
+          <label for="registerPinConfirm">Konfirmasi PIN</label>
+          <div class="input-with-action">
+            <input id="registerPinConfirm" type="password" inputmode="numeric" autocomplete="off" minlength="6" maxlength="6" placeholder="Ulangi PIN" required>
+            <button type="button" class="input-toggle" data-toggle-target="registerPinConfirm" aria-label="Tampilkan konfirmasi PIN">Lihat</button>
+          </div>
+          <div class="field-message" id="registerPinConfirmError" aria-live="polite"></div>
+        </div>
+
+        <button id="registerSubmit" type="submit" class="btn btn-green field-full">Daftar Akun</button>
+        <div id="registerMessage" class="auth-message field-full" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+</body>
+</html>

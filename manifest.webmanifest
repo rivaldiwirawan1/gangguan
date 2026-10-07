@@ -1,0 +1,17 @@
+{
+  "name": "Checklist Penanganan Gangguan Stasiun Tebing Tinggi",
+  "short_name": "Checklist Gangguan",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#eef7f3",
+  "theme_color": "#0f8b8d",
+  "lang": "id",
+  "description": "Aplikasi checklist penanganan gangguan operasional stasiun.",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
