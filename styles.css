@@ -1661,13 +1661,16 @@ tr.checked {
     padding: 14px;
   }
 
+  .left-sidebar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   .gangguan-menu {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
-    touch-action: pan-y;
-    padding-right: 4px;
-    max-height: min(60vh, calc((var(--menu-item-height) * var(--menu-visible-items)) + (8px * (var(--menu-visible-items) - 1))));
+    overflow: visible;
+    padding-right: 0;
+    max-height: none;
+    touch-action: auto;
   }
 
   .right-sidebar {
